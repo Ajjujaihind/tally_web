@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _authenticate() async {
     final clientId = '8f4562b21a';
-    final redirectUri = 'https://frappelogin.vercel.app/';
+    final redirectUri = 'https://tallyweb.vercel.app/';
     final authUrl =
         "https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=$clientId&response_type=code&grant_type=Authorization Code&redirect_uri=$redirectUri";
     try {
@@ -136,7 +136,7 @@ Future<String> getToken(String authCode) async {
 
   String apiUrl =
       'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.get_token';
-  String redirectUri = 'https://frappelogin.vercel.app/';
+  String redirectUri = 'https://tallyweb.vercel.app/';
   String clientId = '8f4562b21a';
   String code = authCode;
 

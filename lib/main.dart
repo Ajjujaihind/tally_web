@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
-import 'package:oauth_dio/oauth_dio.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());

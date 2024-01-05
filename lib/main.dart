@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
-
 import 'package:flutter/material.dart';
+import 'dart:js';
 
 void main() => runApp(MyApp());
 
@@ -158,9 +158,7 @@ Future<String> getToken(String authCode) async {
       },
     );
 
-    // Check if the response status code is 200
     if (response.statusCode == 200) {
-      // Handle the access token and other properties
       accessToken = response.data['access_token'];
 
       print('Access Tokens: $accessToken');

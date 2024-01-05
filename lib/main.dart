@@ -114,22 +114,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future authenticateWeb() async {
-  final oauth = OAuth(
-      clientId: '8f4562b21a',
-      clientSecret: '8d1af1363a',
-      tokenUrl:
-          'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=8f4562b21a&response_type=code&grant_type=Authorization%20Code&redirect_uri=https://demo.extensionerp.com/login');
+// Future authenticateWeb() async {
+//   final oauth = OAuth(
+//       clientId: '8f4562b21a',
+//       clientSecret: '8d1af1363a',
+//       tokenUrl:
+//           'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=8f4562b21a&response_type=code&grant_type=Authorization%20Code&redirect_uri=https://demo.extensionerp.com/login');
 
-  oauth
-      .requestToken(
-          PasswordGrant(username: 'Administrator', password: 'admin1234'))
-      .then((token) {
-    log('AccessToken: ${token.accessToken}');
-    log('RefreshToken: ${token.refreshToken}');
-    log('Expiration: ${token.expiration}');
-  });
-}
+//   oauth
+//       .requestToken(
+//           PasswordGrant(username: 'Administrator', password: 'admin1234'))
+//       .then((token) {
+//     log('AccessToken: ${token.accessToken}');
+//     log('RefreshToken: ${token.refreshToken}');
+//     log('Expiration: ${token.expiration}');
+//   });
+// }
 
 Dio dio = Dio();
 Future<String> getToken(String authCode) async {

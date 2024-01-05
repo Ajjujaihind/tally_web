@@ -58,7 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _authenticate() async {
     final clientId = '8f4562b21a';
-    final redirectUri = 'https://frappelogin.vercel.app//';
+    final redirectUri =
+        'https://frappelogin-ns3tdki45-ajays-projects-0dcf3faa.vercel.app/';
     final authUrl =
         "https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=$clientId&response_type=code&grant_type=Authorization Code&redirect_uri=$redirectUri";
     try {

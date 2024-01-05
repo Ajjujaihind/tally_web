@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       urlPath = currentUrl;
     });
-    print('Current URL: $urlPath  ');
+    print(' Your Current URL: $urlPath  ');
   }
 
   String? token = "";

@@ -1,12 +1,13 @@
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,25 +25,29 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Uri? currentUri;
   String? urlPath;
+
+  String code = "";
+  late String mytoken;
+  late List<Map<String, dynamic>> mdata;
+
   @override
   void initState() {
     super.initState();
+    mytoken = '';
+    mdata = [];
   }
 
-  String code = "";
-  var mytoken;
-  List<Map<String, dynamic>> mdata = [];
   Future<String> getCodeFromUrl(String url) async {
     Uri uri = Uri.parse(url);
 
     code = uri.queryParameters['code'] ?? '';
-    if (code != null) {
-      mytoken = await getToken(code!);
+    if (code.isNotEmpty) {
+      mytoken = await getToken(code);
       mdata = await fetchData(mytoken);
       setState(() {});
-    } else {}
+    }
 
-    return code!;
+    return code;
   }
 
   void geturl() async {
@@ -52,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       urlPath = currentUrl;
     });
-    print('Current URL: $urlPath  ');
+    print('Current URL: $urlPath');
   }
 
   String? token = "";
@@ -61,14 +66,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final clientId = '8f4562b21a';
     final redirectUri = 'https://vercel.com/ajays-projects-0dcf3faa/tallyweb/';
     final authUrl =
-        "https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=$clientId&response_type=code&grant_type=Authorization Code&redirect_uri=$redirectUri";
+        "https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=$clientId&response_type=code&grant_type=authorization_code&redirect_uri=$redirectUri";
     try {
       final result = await FlutterWebAuth2.authenticate(
         url: authUrl,
         callbackUrlScheme: 'myapp',
       );
-      log("Result${result}");
-      token = "Result${result}";
+      log("Result: $result");
+      token = result;
 
       print(result);
     } catch (e) {
@@ -84,10 +89,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Text("URL $urlPath"),
-            code.isEmpty ? SizedBox() : Text("Code $code"),
-            code.isEmpty ? SizedBox() : Text("acess tokenCode $mytoken"),
+            if (code.isNotEmpty) Text("Code $code"),
+            if (code.isNotEmpty) Text("Access Token $mytoken"),
             TextButton(
-              child: const Text("Oauth"),
+              child: const Text("OAuth"),
               onPressed: () {
                 _authenticate();
               },
@@ -98,15 +103,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 geturl();
               },
             ),
-            mdata.isNotEmpty
-                ? Column(
-                    children: [
-                      Text(mdata[0]['name']),
-                      Text(mdata[0]['creation']),
-                      Text(mdata[0]['first_name'])
-                    ],
-                  )
-                : SizedBox()
+            if (mdata.isNotEmpty)
+              Column(
+                children: [
+                  Text(mdata[0]['name']),
+                  Text(mdata[0]['creation']),
+                  Text(mdata[0]['first_name'])
+                ],
+              )
           ],
         ),
       ),
@@ -114,35 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Future authenticateWeb() async {
-//   final oauth = OAuth(
-//       clientId: '8f4562b21a',
-//       clientSecret: '8d1af1363a',
-//       tokenUrl:
-//           'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=8f4562b21a&response_type=code&grant_type=Authorization%20Code&redirect_uri=https://demo.extensionerp.com/login');
-
-//   oauth
-//       .requestToken(
-//           PasswordGrant(username: 'Administrator', password: 'admin1234'))
-//       .then((token) {
-//     log('AccessToken: ${token.accessToken}');
-//     log('RefreshToken: ${token.refreshToken}');
-//     log('Expiration: ${token.expiration}');
-//   });
-// }
-
 Dio dio = Dio();
 Future<String> getToken(String authCode) async {
-  Dio dio = Dio();
-
   String apiUrl =
       'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.get_token';
   String redirectUri = 'https://vercel.com/ajays-projects-0dcf3faa/tallyweb/';
   String clientId = '8f4562b21a';
-  String code = authCode;
 
   try {
-    String? accessToken;
+    String accessToken;
     Response response = await dio.post(
       apiUrl,
       options: Options(
@@ -153,7 +137,7 @@ Future<String> getToken(String authCode) async {
       ),
       data: {
         'grant_type': 'authorization_code',
-        'code': '$code',
+        'code': authCode,
         'redirect_uri': Uri.encodeFull(redirectUri),
         'client_id': clientId,
       },
@@ -162,32 +146,34 @@ Future<String> getToken(String authCode) async {
     if (response.statusCode == 200) {
       accessToken = response.data['access_token'];
 
-      print('Access Tokens: $accessToken');
+      print('Access Token: $accessToken');
+      return accessToken;
     } else {
       print('Non-200 status code: ${response.statusCode}');
+      throw Exception('Failed to get access token');
     }
-    return accessToken!;
   } catch (error) {
     print('Error: $error');
-    return '';
+    throw Exception('Failed to get access token');
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchData(String accesstoken) async {
-  final Url =
+Future<List<Map<String, dynamic>>> fetchData(String accessToken) async {
+  final url =
       Uri.parse('https://demo.extensionerp.com/api/resource/Lead?fields=["*"]');
 
   try {
     final response = await dio.get(
-      '$Url',
+      '$url',
       options: Options(
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accesstoken',
+          'Authorization': 'Bearer $accessToken',
         },
       ),
     );
+
     List<Map<String, dynamic>> mylist = [];
     print("response ${response}");
     if (response.statusCode == 200) {
@@ -199,10 +185,10 @@ Future<List<Map<String, dynamic>>> fetchData(String accesstoken) async {
       return mylist;
     } else {
       log("Failed login ");
-      throw Exception('Failed login');
+      throw Exception('Failed to fetch data');
     }
   } catch (e) {
     print('Error: $e');
-    throw e;
+    throw Exception('Failed to fetch data');
   }
 }

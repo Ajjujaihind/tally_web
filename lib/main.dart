@@ -37,11 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Uri uri = Uri.parse(url);
 
     code = uri.queryParameters['code'] ?? '';
-    if (code != null) {
-      mytoken = await getToken(code!);
-      mdata = await fetchData(mytoken);
-      setState(() {});
-    } else {}
+    mytoken = await getToken(code!);
+    mdata = await fetchData(mytoken);
+    setState(() {});
 
     return code!;
   }
@@ -60,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _authenticate() async {
     final clientId = '8f4562b21a';
-    final redirectUri = 'https://vercel.com/ajays-projects-0dcf3faa/tallyweb/';
+    final redirectUri = 'https://frappelogin.vercel.app//';
     final authUrl =
         "https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.authorize?client_id=$clientId&response_type=code&grant_type=Authorization Code&redirect_uri=$redirectUri";
     try {
@@ -138,7 +136,7 @@ Future<String> getToken(String authCode) async {
 
   String apiUrl =
       'https://demo.extensionerp.com/api/method/frappe.integrations.oauth2.get_token';
-  String redirectUri = 'https://vercel.com/ajays-projects-0dcf3faa/tallyweb/';
+  String redirectUri = 'https://frappelogin.vercel.app//';
   String clientId = '8f4562b21a';
   String code = authCode;
 
